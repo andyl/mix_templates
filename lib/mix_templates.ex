@@ -603,7 +603,7 @@ end
 
     defp copy_and_expand(source, dest, assigns) do
       try do
-        content = EEx.eval_file(source, assigns, [ trim: true ])
+        content = EEx.eval_file(check(source), assigns, [ trim: true ])
         MG.create_file(dest, content)
         mode = File.stat!(source).mode
         File.chmod!(dest, mode)
@@ -612,6 +612,14 @@ end
           Mix.shell.info([:green, "- ignoring",
                           :reset, " #{dest} ",
                           :faint, :cyan, "(it isn't needed)"])
+      end
+    end
+
+    defp check(source) do
+      if File.exists?(source) do
+        source
+      else
+        String.replace(source, "$PROJECT_NAME$", "PROJECT_NAME")
       end
     end
 
