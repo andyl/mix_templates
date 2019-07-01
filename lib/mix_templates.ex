@@ -621,12 +621,35 @@ end
 
     # You can escape the projrct name by doubling the $ characters,
     # so $$PROJECT_NAME$$ becomes $PROJECT_NAME$
+    # defp dest_file_name(name, assigns) do
+    #   if name =~ ~r{\$\$PROJECT_NAME\$\$} do
+    #     String.replace(name,"$$PROJECT_NAME$$", "$PROJECT_NAME$")
+    #   else
+    #     String.replace(name, "$PROJECT_NAME$", assigns[:assigns][:project_name])
+    #   end
+    # end
+
     defp dest_file_name(name, assigns) do
-      if name =~ ~r{\$\$PROJECT_NAME\$\$} do
-        String.replace(name,"$$PROJECT_NAME$$", "$PROJECT_NAME$")
-      else
-        String.replace(name, "$PROJECT_NAME$", assigns[:assigns][:project_name])
-      end
+      [
+        {
+          ~r{\$\$PROJECT_NAME\$\$},
+          String.replace(name, "$$PROJECT_NAME$$", "$PROJECT_NAME$")
+        },
+        {
+          ~r{\$PROJECT_NAME\$},
+          String.replace(name, "$PROJECT_NAME$", assigns[:assigns][:project_name])
+        },
+        {
+          ~r{PROJECT_NAME}, 
+          String.replace(name, "PROJECT_NAME", assigns[:assigns][:project_name])
+        },
+        {
+          ~r{}, 
+          name
+        }
+      ]
+      |> Enum.find(fn {reg, _} -> String.match?(name, reg) end)
+      |> elem(1)
     end
 
     defp maybe_create_directory(path, force) when not force do
