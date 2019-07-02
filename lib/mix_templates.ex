@@ -603,9 +603,6 @@ end
 
     defp copy_and_expand(source, dest, assigns) do
       try do
-        IO.inspect source
-        IO.inspect dest
-        IO.inspect assigns
         content = EEx.eval_file(check(source), assigns, [ trim: true ])
         MG.create_file(dest, content)
         mode = File.stat!(source).mode
