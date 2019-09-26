@@ -604,7 +604,7 @@ end
     defp copy_and_expand(source, dest, assigns) do
       try do
         content = EEx.eval_file(check(source), assigns, [ trim: true ])
-        MG.create_file(dest, content)
+        MG.create_file(dest, content, force: true)
         mode = File.stat!(source).mode
         File.chmod!(dest, mode)
       catch
